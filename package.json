@@ -4,7 +4,8 @@
   "description": "If the world is round service",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.ts",
+    "start": "node build/index.js",
+    "start-local": "nodemon index.ts",
     "init": "typescript --init",
     "build": "tsc --build",
     "test": "echo \"Error: no test specified\" && exit 1"
