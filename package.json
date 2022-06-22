@@ -1,8 +1,8 @@
 {
-  "name": "ts-template",
+  "name": "if-world-is-round-google-action",
   "version": "1.0.0",
   "description": "If the world is round service",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "start": "nodemon index.ts",
     "init": "typescript --init",
@@ -13,6 +13,9 @@
   "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/joi": "^17.2.3",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "eslint": "^8.15.0",
@@ -27,5 +30,10 @@
     "ts-node": "^10.7.0",
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "joi": "^17.6.0"
   }
 }
