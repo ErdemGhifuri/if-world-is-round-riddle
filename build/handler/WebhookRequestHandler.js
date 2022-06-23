@@ -20,15 +20,18 @@ class WebhookRequestHandler {
             try {
                 // validate user input according to https://cloud.google.com/dialogflow/es/docs/fulfillment-webhook schema
                 const bodySchema = joi_1.default.object({
-                    responseId: joi_1.default.string().required(),
-                    session: joi_1.default.string().required(),
-                    queryResult: joi_1.default.object().required(),
-                    originalDetectIntentRequest: joi_1.default.string().required(),
+                    handler: joi_1.default.object({ name: joi_1.default.string().valid("throwQuestion", "getAnswer").required() }).required(),
+                    intent: joi_1.default.object().required(),
+                    scene: joi_1.default.object().required(),
+                    session: joi_1.default.object().required(),
+                    user: joi_1.default.object().required(),
+                    home: joi_1.default.object().required(),
+                    device: joi_1.default.object().required(),
                 });
                 // validate the schema
                 const validateSchema = bodySchema.validate(req.body);
                 // handle if any mismatch between the request body and the designated schema
-                if (validateSchema.error) {
+                if (!validateSchema.error) {
                     const webhookRequestHandler = new WebhookRequestHandler();
                     const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessages(req.body);
                     return res.json({ fulfillmentMessages });
@@ -44,30 +47,60 @@ class WebhookRequestHandler {
     }
     getFulfillmentMessages(requestBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(requestBody);
-            const { firstNumber, secondNumber, answer } = { firstNumber: 1, secondNumber: 8, answer: 9 };
-            // check the real answer
-            const realAnswer = firstNumber + secondNumber;
-            const realRoundedWorldAnswerSplit = String(realAnswer)
-                .split("")
-                .map((value) => this.answerDictionary(parseInt(value)));
-            const realRoundedWorldAnswer = realRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
-            // check user asnwer
-            const userRoundedWorldAnswerSplit = String(realAnswer)
-                .split("")
-                .map((value) => this.answerDictionary(parseInt(value)));
-            const userRoundedWorldAnswer = userRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
-            // match the answer
-            if (realRoundedWorldAnswer === userRoundedWorldAnswer) {
-                return {};
+            switch (requestBody.handler.name) {
+                case "throwQuestion":
+                    return this.throwQuestion(requestBody);
+                case "getAnswer":
+                    return this.getAnswer(requestBody);
+                default:
+                    return {};
             }
-            else
-                return {};
         });
     }
-    throwQuestion() {
+    throwQuestion(requestBody) {
         const firstNumber = Math.round(Math.random() * 10);
         const secondNumber = Math.round(Math.random() * 10);
+        const { session } = requestBody;
+        return {
+            session: Object.assign(Object.assign({}, session), { params: {
+                    firstNumber,
+                    secondNumber,
+                } }),
+            // prompt: {
+            //   override: false,
+            //   firstSimple: {
+            //     speech: "Hello World.",
+            //     text: "",
+            //   },
+            // },
+            // scene: {
+            //   name: "SceneName",
+            //   slots: {},
+            //   next: {
+            //     name: "actions.scene.END_CONVERSATION",
+            //   },
+            // },
+        };
+    }
+    getAnswer(requestBody) {
+        const { firstNumber, secondNumber, answer } = { firstNumber: 1, secondNumber: 8, answer: 9 };
+        // check the real answer
+        const realAnswer = firstNumber + secondNumber;
+        const realRoundedWorldAnswerSplit = String(realAnswer)
+            .split("")
+            .map((value) => this.answerDictionary(parseInt(value)));
+        const realRoundedWorldAnswer = realRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
+        // check user asnwer
+        const userRoundedWorldAnswerSplit = String(realAnswer)
+            .split("")
+            .map((value) => this.answerDictionary(parseInt(value)));
+        const userRoundedWorldAnswer = userRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
+        // match the answer
+        if (realRoundedWorldAnswer === userRoundedWorldAnswer) {
+            return {};
+        }
+        else
+            return {};
     }
     /**
      * This function is used to determine the sum of 'rounded world' in a number
