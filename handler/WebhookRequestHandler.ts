@@ -48,7 +48,7 @@ export class WebhookRequestHandler {
     // send the questions and answer
     return {
       session: {
-        session: requestBody.session,
+        ...requestBody.session,
         params: { ...question, ...answer },
       },
     };

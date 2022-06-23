@@ -54,10 +54,7 @@ class WebhookRequestHandler {
             const answer = this.getAnswer(question.firstNumber, question.secondNumber);
             // send the questions and answer
             return {
-                session: {
-                    session: requestBody.session,
-                    params: Object.assign(Object.assign({}, question), answer),
-                },
+                session: Object.assign(Object.assign({}, requestBody.session), { params: Object.assign(Object.assign({}, question), answer) }),
             };
         });
     }
