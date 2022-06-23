@@ -64,19 +64,19 @@ export class WebhookRequestHandler {
           secondNumber,
         },
       },
-      prompt: {
-        override: false,
-        firstSimple: {
-          speech: "Hello World.",
-          text: "",
-        },
-      },
-      scene: {
-        name: "TellRiddle",
-        next: {
-          name: "actions.scene.END_CONVERSATION",
-        },
-      },
+      // prompt: {
+      //   override: false,
+      //   firstSimple: {
+      //     speech: "Hello World.",
+      //     text: "",
+      //   },
+      // },
+      // scene: {
+      //   name: "TellRiddle",
+      //   next: {
+      //     name: "actions.scene.END_CONVERSATION",
+      //   },
+      // },
     };
   }
 
