@@ -30,8 +30,8 @@ export class WebhookRequestHandler {
       // handle if any mismatch between the request body and the designated schema
       if (!validateSchema.error) {
         const webhookRequestHandler = new WebhookRequestHandler();
-        const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessages(req.body);
-        return res.json({ fulfillmentMessages });
+        const data = webhookRequestHandler.getFulfillmentMessages(req.body);
+        return res.json({ ...data });
       } else res.sendStatus(400);
     } catch (error) {
       console.log("error in webhookRequest:", error);
