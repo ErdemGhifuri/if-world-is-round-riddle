@@ -17,7 +17,7 @@ export class WebhookRequestHandler {
     try {
       // validate user input according to https://cloud.google.com/dialogflow/es/docs/fulfillment-webhook schema
       const bodySchema = Joi.object({
-        handler: Joi.object({ name: Joi.string().valid("throwQuestion", "getAnswer").required() }).required(),
+        handler: Joi.object({ name: Joi.string().valid("getQuestion").required() }).required(),
         intent: Joi.object().required(),
         scene: Joi.object().required(),
         session: Joi.object().required(),
@@ -31,7 +31,6 @@ export class WebhookRequestHandler {
       if (!validateSchema.error) {
         const webhookRequestHandler = new WebhookRequestHandler();
         const data = await webhookRequestHandler.getFulfillmentMessages(req.body);
-        console.log(data);
         return res.json({ ...data });
       } else res.sendStatus(400);
     } catch (error) {
@@ -72,10 +71,8 @@ export class WebhookRequestHandler {
    */
   private getAnswer(firstNumber: number, secondNumber: number) {
     // check the  answer
-    const answer: number = firstNumber + secondNumber;
-    const roundedWorldAnswerSplit = String(answer)
-      .split("")
-      .map((value) => this.answerDictionary(parseInt(value)));
+    const answer: number[] = [firstNumber, secondNumber];
+    const roundedWorldAnswerSplit = answer.map((value) => this.answerDictionary(value));
     const roundedWorldAnswer = roundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
     // match the answer
     return { answer: roundedWorldAnswer };
