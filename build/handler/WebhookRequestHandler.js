@@ -33,7 +33,7 @@ class WebhookRequestHandler {
                 // handle if any mismatch between the request body and the designated schema
                 if (!validateSchema.error) {
                     const webhookRequestHandler = new WebhookRequestHandler();
-                    const data = webhookRequestHandler.getFulfillmentMessages(req.body);
+                    const data = yield webhookRequestHandler.getFulfillmentMessages(req.body);
                     console.log(data);
                     return res.json(Object.assign({}, data));
                 }
