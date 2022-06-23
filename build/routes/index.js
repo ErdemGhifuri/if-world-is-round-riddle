@@ -10,8 +10,7 @@ const route = express_1.default.Router();
 // === CHECK CONNECTION
 route.get("/", (req, res) => res.sendStatus(200));
 // == HANDLER
-route.post("/webhook-request/get-random-number", AuthLayer_1.AuthLayer, WebhookRequestHandler_1.WebhookRequestHandler.webhookRequestGetRandomNumber);
-route.post("/webhook-request/answer-the-question", AuthLayer_1.AuthLayer, WebhookRequestHandler_1.WebhookRequestHandler.webhookRequestAnswerQuestion);
+route.post("/webhook-request", AuthLayer_1.AuthLayer, WebhookRequestHandler_1.WebhookRequestHandler.webhookRequest);
 // === MISC
 route.get("*", (req, res) => res.sendStatus(404));
 route.post("*", (req, res) => res.sendStatus(404));

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookRequestHandler = void 0;
 const joi_1 = __importDefault(require("joi"));
 class WebhookRequestHandler {
-    static webhookRequestAnswerQuestion(req, res) {
+    static webhookRequest(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // validate user input according to https://cloud.google.com/dialogflow/es/docs/fulfillment-webhook schema
@@ -30,7 +30,7 @@ class WebhookRequestHandler {
                 // handle if any mismatch between the request body and the designated schema
                 if (validateSchema.error) {
                     const webhookRequestHandler = new WebhookRequestHandler();
-                    const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessagesAnswerQuestion(req.body);
+                    const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessages(req.body);
                     return res.json({ fulfillmentMessages });
                 }
                 else
@@ -42,34 +42,7 @@ class WebhookRequestHandler {
             }
         });
     }
-    static webhookRequestGetRandomNumber(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                // validate user input according to https://cloud.google.com/dialogflow/es/docs/fulfillment-webhook schema
-                const bodySchema = joi_1.default.object({
-                    responseId: joi_1.default.string().required(),
-                    session: joi_1.default.string().required(),
-                    queryResult: joi_1.default.object().required(),
-                    originalDetectIntentRequest: joi_1.default.string().required(),
-                });
-                // validate the schema
-                const validateSchema = bodySchema.validate(req.body);
-                // handle if any mismatch between the request body and the designated schema
-                if (validateSchema.error) {
-                    const webhookRequestHandler = new WebhookRequestHandler();
-                    const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessagesGetRandomNumber(req.body);
-                    return res.json({ fulfillmentMessages });
-                }
-                else
-                    res.sendStatus(400);
-            }
-            catch (error) {
-                console.log("error in webhookRequest:", error);
-                return res.sendStatus(500);
-            }
-        });
-    }
-    getFulfillmentMessagesAnswerQuestion(requestBody) {
+    getFulfillmentMessages(requestBody) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(requestBody);
             const { firstNumber, secondNumber, answer } = { firstNumber: 1, secondNumber: 8, answer: 9 };
@@ -92,11 +65,9 @@ class WebhookRequestHandler {
                 return {};
         });
     }
-    getFulfillmentMessagesGetRandomNumber(requestBody) {
-        console.log(requestBody);
+    throwQuestion() {
         const firstNumber = Math.round(Math.random() * 10);
         const secondNumber = Math.round(Math.random() * 10);
-        return {};
     }
     /**
      * This function is used to determine the sum of 'rounded world' in a number
