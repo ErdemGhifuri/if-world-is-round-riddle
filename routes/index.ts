@@ -1,5 +1,4 @@
 import express, { Router, Request, Response } from "express";
-import { AuthLayer } from "../helpers/AuthLayer";
 import { WebhookRequestHandler } from "../handler/WebhookRequestHandler";
 
 const route: Router = express.Router();
