@@ -41,62 +41,44 @@ export class WebhookRequestHandler {
   }
 
   private async getFulfillmentMessages(requestBody: RequestBody) {
-    switch (requestBody.handler.name) {
-      case "throwQuestion":
-        return this.throwQuestion(requestBody);
-      case "getAnswer":
-        return this.getAnswer(requestBody);
-      default:
-        return {};
-    }
-  }
-
-  private throwQuestion(requestBody: RequestBody) {
-    const firstNumber = Math.round(Math.random() * 10);
-    const secondNumber = Math.round(Math.random() * 10);
-
-    const { session } = requestBody;
+    // get the questions
+    const question = this.getQuestion();
+    // get answer
+    const answer = this.getAnswer(question.firstNumber, question.secondNumber);
+    // send the questions and answer
     return {
       session: {
-        ...session,
-        params: {
-          firstNumber,
-          secondNumber,
-        },
+        session: requestBody.session,
+        params: { ...question, ...answer },
       },
-      // prompt: {
-      //   override: false,
-      //   firstSimple: {
-      //     speech: "Hello World.",
-      //     text: "",
-      //   },
-      // },
-      // scene: {
-      //   name: "TellRiddle",
-      //   next: {
-      //     name: "actions.scene.END_CONVERSATION",
-      //   },
-      // },
     };
   }
 
-  private getAnswer(requestBody: RequestBody) {
-    const { firstNumber, secondNumber, answer } = { firstNumber: 1, secondNumber: 8, answer: 9 };
-    // check the real answer
-    const realAnswer: number = firstNumber + secondNumber;
-    const realRoundedWorldAnswerSplit = String(realAnswer)
+  /**
+   * This is a handler for getting the question
+   * @returns -> Response JSON for google actions
+   */
+  private getQuestion() {
+    const firstNumber = Math.round(Math.random() * 10);
+    const secondNumber = Math.round(Math.random() * 10);
+    return { firstNumber, secondNumber };
+  }
+
+  /**
+   * This is a handler for throw the question
+   * @param firstNumber -> first number of the question
+   * @param secondNumber -> second number of the question
+   * @returns -> Response JSON for google actions
+   */
+  private getAnswer(firstNumber: number, secondNumber: number) {
+    // check the  answer
+    const answer: number = firstNumber + secondNumber;
+    const roundedWorldAnswerSplit = String(answer)
       .split("")
       .map((value) => this.answerDictionary(parseInt(value)));
-    const realRoundedWorldAnswer = realRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
-    // check user asnwer
-    const userRoundedWorldAnswerSplit = String(realAnswer)
-      .split("")
-      .map((value) => this.answerDictionary(parseInt(value)));
-    const userRoundedWorldAnswer = userRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
+    const roundedWorldAnswer = roundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
     // match the answer
-    if (realRoundedWorldAnswer === userRoundedWorldAnswer) {
-      return {};
-    } else return {};
+    return { answer: roundedWorldAnswer };
   }
 
   /**

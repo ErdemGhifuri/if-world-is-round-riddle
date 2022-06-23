@@ -48,59 +48,43 @@ class WebhookRequestHandler {
     }
     getFulfillmentMessages(requestBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            switch (requestBody.handler.name) {
-                case "throwQuestion":
-                    return this.throwQuestion(requestBody);
-                case "getAnswer":
-                    return this.getAnswer(requestBody);
-                default:
-                    return {};
-            }
+            // get the questions
+            const question = this.getQuestion();
+            // get answer
+            const answer = this.getAnswer(question.firstNumber, question.secondNumber);
+            // send the questions and answer
+            return {
+                session: {
+                    session: requestBody.session,
+                    params: Object.assign(Object.assign({}, question), answer),
+                },
+            };
         });
     }
-    throwQuestion(requestBody) {
+    /**
+     * This is a handler for getting the question
+     * @returns -> Response JSON for google actions
+     */
+    getQuestion() {
         const firstNumber = Math.round(Math.random() * 10);
         const secondNumber = Math.round(Math.random() * 10);
-        const { session } = requestBody;
-        return {
-            session: Object.assign(Object.assign({}, session), { params: {
-                    firstNumber,
-                    secondNumber,
-                } }),
-            // prompt: {
-            //   override: false,
-            //   firstSimple: {
-            //     speech: "Hello World.",
-            //     text: "",
-            //   },
-            // },
-            // scene: {
-            //   name: "TellRiddle",
-            //   next: {
-            //     name: "actions.scene.END_CONVERSATION",
-            //   },
-            // },
-        };
+        return { firstNumber, secondNumber };
     }
-    getAnswer(requestBody) {
-        const { firstNumber, secondNumber, answer } = { firstNumber: 1, secondNumber: 8, answer: 9 };
-        // check the real answer
-        const realAnswer = firstNumber + secondNumber;
-        const realRoundedWorldAnswerSplit = String(realAnswer)
+    /**
+     * This is a handler for throw the question
+     * @param firstNumber -> first number of the question
+     * @param secondNumber -> second number of the question
+     * @returns -> Response JSON for google actions
+     */
+    getAnswer(firstNumber, secondNumber) {
+        // check the  answer
+        const answer = firstNumber + secondNumber;
+        const roundedWorldAnswerSplit = String(answer)
             .split("")
             .map((value) => this.answerDictionary(parseInt(value)));
-        const realRoundedWorldAnswer = realRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
-        // check user asnwer
-        const userRoundedWorldAnswerSplit = String(realAnswer)
-            .split("")
-            .map((value) => this.answerDictionary(parseInt(value)));
-        const userRoundedWorldAnswer = userRoundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
+        const roundedWorldAnswer = roundedWorldAnswerSplit.reduce((a, b) => a + b, 0);
         // match the answer
-        if (realRoundedWorldAnswer === userRoundedWorldAnswer) {
-            return {};
-        }
-        else
-            return {};
+        return { answer: roundedWorldAnswer };
     }
     /**
      * This function is used to determine the sum of 'rounded world' in a number
