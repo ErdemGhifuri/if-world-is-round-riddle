@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 
 export class WebhookRequestHandler {
-  static async webhookRequestAnswerQuestion(req: Request, res: Response) {
+  static async webhookRequest(req: Request, res: Response) {
     try {
       // validate user input according to https://cloud.google.com/dialogflow/es/docs/fulfillment-webhook schema
       const bodySchema = Joi.object({
@@ -16,7 +16,7 @@ export class WebhookRequestHandler {
       // handle if any mismatch between the request body and the designated schema
       if (validateSchema.error) {
         const webhookRequestHandler = new WebhookRequestHandler();
-        const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessagesAnswerQuestion(req.body);
+        const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessages(req.body);
         return res.json({ fulfillmentMessages });
       } else res.sendStatus(400);
     } catch (error) {
@@ -25,30 +25,7 @@ export class WebhookRequestHandler {
     }
   }
 
-  static async webhookRequestGetRandomNumber(req: Request, res: Response) {
-    try {
-      // validate user input according to https://cloud.google.com/dialogflow/es/docs/fulfillment-webhook schema
-      const bodySchema = Joi.object({
-        responseId: Joi.string().required(),
-        session: Joi.string().required(),
-        queryResult: Joi.object().required(),
-        originalDetectIntentRequest: Joi.string().required(),
-      });
-      // validate the schema
-      const validateSchema = bodySchema.validate(req.body);
-      // handle if any mismatch between the request body and the designated schema
-      if (validateSchema.error) {
-        const webhookRequestHandler = new WebhookRequestHandler();
-        const fulfillmentMessages = webhookRequestHandler.getFulfillmentMessagesGetRandomNumber(req.body);
-        return res.json({ fulfillmentMessages });
-      } else res.sendStatus(400);
-    } catch (error) {
-      console.log("error in webhookRequest:", error);
-      return res.sendStatus(500);
-    }
-  }
-
-  private async getFulfillmentMessagesAnswerQuestion(requestBody: {
+  private async getFulfillmentMessages(requestBody: {
     responseId: string;
     session: string;
     queryResult: any;
@@ -73,16 +50,9 @@ export class WebhookRequestHandler {
     } else return {};
   }
 
-  private getFulfillmentMessagesGetRandomNumber(requestBody: {
-    responseId: string;
-    session: string;
-    queryResult: any;
-    originalDetectIntentRequest: string;
-  }) {
-    console.log(requestBody);
+  private throwQuestion() {
     const firstNumber = Math.round(Math.random() * 10);
     const secondNumber = Math.round(Math.random() * 10);
-    return {};
   }
 
   /**
