@@ -34,6 +34,7 @@ class WebhookRequestHandler {
                 if (!validateSchema.error) {
                     const webhookRequestHandler = new WebhookRequestHandler();
                     const data = webhookRequestHandler.getFulfillmentMessages(req.body);
+                    console.log(data);
                     return res.json(Object.assign({}, data));
                 }
                 else
@@ -66,20 +67,19 @@ class WebhookRequestHandler {
                     firstNumber,
                     secondNumber,
                 } }),
-            // prompt: {
-            //   override: false,
-            //   firstSimple: {
-            //     speech: "Hello World.",
-            //     text: "",
-            //   },
-            // },
-            // scene: {
-            //   name: "SceneName",
-            //   slots: {},
-            //   next: {
-            //     name: "actions.scene.END_CONVERSATION",
-            //   },
-            // },
+            prompt: {
+                override: false,
+                firstSimple: {
+                    speech: "Hello World.",
+                    text: "",
+                },
+            },
+            scene: {
+                name: "TellRiddle",
+                next: {
+                    name: "actions.scene.END_CONVERSATION",
+                },
+            },
         };
     }
     getAnswer(requestBody) {
